@@ -23,8 +23,8 @@ public class Robot implements RobotSonarEventListener {
 
 	public Robot() {
 		super();
-		_robotSonar.addFrontObstacleListener(this)
-				   .addDistanceMeasuredListener(_display);
+		_robotSonar.addListener(this)
+				   .addListener(_display);
 	}
 
 	public void Run() {
@@ -35,18 +35,27 @@ public class Robot implements RobotSonarEventListener {
 			Thread.yield();
 	}
 
-	@Override
-	public void perform(RobotSonarEventArg eventArg) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void dispose() {
 		_timer.cancel();
 		_motor.stop();
-		_robotSonar.removeFrontObstacleListener(this)
-				   .removeDistanceMeasuredListener(_display)
+		_robotSonar.removeListener(this)
+				   .removeListener(_display)
 				   .dispose();
+	}
+
+	@Override
+	public void frontObstacleDetected(RobotSonarEventArg eventArg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void distanceMeasured(RobotSonarEventArg eventArg) {
+	}
+
+	@Override
+	public void rotationDirectionChanged(RobotSonarEventArg eventArg) {
 	}
 
 }

@@ -6,9 +6,7 @@ public class RobotSonar {
 	public static final int MaxAngle = 90;
 	public static final int MinAngle = MaxAngle * (-1);
 
-	private final ArrayList<RobotSonarEventListener> _frontObstacleListeners = new ArrayList<RobotSonarEventListener>();
-	private final ArrayList<RobotSonarEventListener> _distanceMeasuredListeners = new ArrayList<RobotSonarEventListener>();
-	private final ArrayList<RobotSonarEventListener> _changeDirectionListeners = new ArrayList<RobotSonarEventListener>();
+	private final ArrayList<RobotSonarEventListener> _eventListeners = new ArrayList<RobotSonarEventListener>();
 	private final RobotSonarEventArg _eventArg;
 
 	private int _distance, _angle, _obstacleMinDistance, _direction;
@@ -28,64 +26,35 @@ public class RobotSonar {
 
 	public RobotSonar changeDirection(int direction) {
 		setDirection(direction);
-		fireChangeDirectionEvent();
+		fireRotationDirectionChangedEvent();
 		return this;
 	}
 
-	public RobotSonar addFrontObstacleListener(RobotSonarEventListener listener) {
-	    addListener(listener, _frontObstacleListeners);
-		return this;
-	}
-	
-	public RobotSonar removeFrontObstacleListener(RobotSonarEventListener listener) {
-	    removeListener(listener, _frontObstacleListeners);
+	public RobotSonar addListener(RobotSonarEventListener listener) {
+		_eventListeners.add(listener);
 		return this;
 	}
 
-	public RobotSonar addDistanceMeasuredListener(RobotSonarEventListener listener) {
-		addListener(listener, _distanceMeasuredListeners);
+	public RobotSonar removeListener(RobotSonarEventListener listener) {
+		_eventListeners.remove(listener);
 		return this;
-	}
-
-	public RobotSonar removeDistanceMeasuredListener(RobotSonarEventListener listener) {
-		removeListener(listener, _distanceMeasuredListeners);
-		return this;
-	}
-
-	public RobotSonar addChangeDirectionListener(RobotSonarEventListener listener) {
-	    addListener(listener, _changeDirectionListeners);
-		return this;
-	}
-	
-	public RobotSonar removeChangeDirectionListener(RobotSonarEventListener listener) {
-	    removeListener(listener, _changeDirectionListeners);
-		return this;
-	}
-
-	private void addListener(RobotSonarEventListener listener, ArrayList<RobotSonarEventListener> eventListenerList) {
-		eventListenerList.add(listener);
-	}
-
-	private void removeListener(RobotSonarEventListener listener, ArrayList<RobotSonarEventListener> eventListenerList) {
-		eventListenerList.remove(listener);
 	}
 
 	private void fireFrontObstacleEvent() {
-	    fireEvent(_frontObstacleListeners);
+		for (RobotSonarEventListener eventListener : _eventListeners)
+            eventListener.frontObstacleDetected(_eventArg);
 	}
 
 	private void fireDistanceMeasuredEvent() {
-	    fireEvent(_distanceMeasuredListeners);
+		for (RobotSonarEventListener eventListener : _eventListeners)
+            eventListener.distanceMeasured(_eventArg);
 	}
 
-	private void fireChangeDirectionEvent() {
-	    fireEvent(_changeDirectionListeners);
+	private void fireRotationDirectionChangedEvent() {
+		for (RobotSonarEventListener eventListener : _eventListeners)
+            eventListener.rotationDirectionChanged(_eventArg);
 	}
 
-	private void fireEvent(ArrayList<RobotSonarEventListener> eventListeners) {
-		for (RobotSonarEventListener eventListener : eventListeners)
-            eventListener.perform(_eventArg);
-	}
 	public void setDistance(int distance, int angle) {
 		setDistance(distance);
 		setAngle(angle);
@@ -119,8 +88,6 @@ public class RobotSonar {
 	}
 
 	public void dispose() {
-		_distanceMeasuredListeners.clear();
-		_changeDirectionListeners.clear();
-		_frontObstacleListeners.clear();
+		_eventListeners.clear();
 	}
 }
