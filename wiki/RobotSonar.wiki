@@ -2,14 +2,15 @@
 
 = Introduction =
 
-Robot needs navigation abilities. First solution is to use a sonar.
-
+Utrasonic sonar emits sound waives in frequesncy which humans cannot detect. Receiving waives reflected by obstacles, the sonar calculates a distance to it.
+Robot sonar is a more complex system including a sonar, a tilt mechanism and calculating software, which provide ready to use information.
 
 = Details =
 
-Sonar should
+Robot sonar features
   * Detect obstacle in front of the way
   * Measure distance at the forward halfcircle
   * Make measures in continuos mode
+  * Notify about its state (measure made, rotate direction is changed, etc)
 
 To enlight development process - using display with "radar-style" diagram, reflecting distance, measured by the sonar.
