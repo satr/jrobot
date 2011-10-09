@@ -5,10 +5,9 @@
 
 JRobot - is a project to controll a robot ba Java application.
 
-
 = Details =
 
 Robot needs some abilities and features:
   * [RobotInteraction Interaction]
   * Navigation
-  * Motion [Hello world]
+  * Motion
