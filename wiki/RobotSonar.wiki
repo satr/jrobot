@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Robot need to be able have navigation abilities. First solution is using a sonar.
+Robot needs navigation abilities. First solution is to use a sonar.
 
 
 = Details =
