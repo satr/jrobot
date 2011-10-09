@@ -47,13 +47,26 @@ public class RobotDisplay implements RobotSonarEventListener {
 		_g.drawLine(x,0, x, y);
 		setColorOn();
 		_g.drawLine(x,y, x, LCD.SCREEN_HEIGHT);
-//		LCD.drawString("  ", 10, 5);
-//		LCD.drawString(String.valueOf(distance), 10, 5);
+		showDistanceStatus(String.valueOf(distance));
 		LCD.asyncRefresh();
 	}
 
 	@Override
 	public void rotationDirectionChanged(RobotSonarEventArg eventArg) {
 		_g.clear();
+	}
+
+	public void showDistanceStatus(String message) {
+//		writeMessage(message, 4);
+	}
+
+	public void showRobotStatus(String message) {
+//		writeMessage(message, 5);
+	}
+
+	private void writeMessage(String message, int lineNumber) {
+		LCD.asyncRefreshWait();
+		LCD.drawString(message, 0, lineNumber);
+		LCD.asyncRefresh();
 	}
 }
