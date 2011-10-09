@@ -1,0 +1,12 @@
+#summary Robot Navigation
+
+= Introduction =
+
+Robot needs navigation to move to target in effective way.
+
+
+= Details =
+
+Navigation may be provided by following sensors
+  * [RobotSonar Sonar]
+  * Bumper
