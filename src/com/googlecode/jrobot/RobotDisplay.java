@@ -19,8 +19,24 @@ public class RobotDisplay implements RobotSonarEventListener {
 		_g.clear();
 	}
 
+	private void setColorOn() {
+		_g.setColor(0,0,0);
+	}
+
+	private void setColorOff() {
+		_g.setColor(255,255,255);
+	}
+
+	public void dispose() {
+		_g.clear();
+	}
+
 	@Override
-	public void perform(RobotSonarEventArg eventArg) {
+	public void frontObstacleDetected(RobotSonarEventArg eventArg) {
+	}
+
+	@Override
+	public void distanceMeasured(RobotSonarEventArg eventArg) {
 		LCD.asyncRefreshWait();
 		RobotSonar robotSonar = eventArg.getRobotSonar();
 		int distance = robotSonar.getDistance();
@@ -36,15 +52,8 @@ public class RobotDisplay implements RobotSonarEventListener {
 		LCD.asyncRefresh();
 	}
 
-	private void setColorOn() {
-		_g.setColor(0,0,0);
-	}
-
-	private void setColorOff() {
-		_g.setColor(255,255,255);
-	}
-
-	public void dispose() {
+	@Override
+	public void rotationDirectionChanged(RobotSonarEventArg eventArg) {
 		_g.clear();
 	}
 }
