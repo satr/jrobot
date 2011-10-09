@@ -1,0 +1,10 @@
+#summary Robot Display
+
+== Introduction ==
+
+Robot display shows specific information robot and its sensors provide.
+
+== Details ==
+
+Robot display should be able to switch between different modes
+  * [RobotSonarDisplay Robot Sonar Display]
