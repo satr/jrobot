@@ -1,4 +1,4 @@
-#Building robot sonar solution to provide navigation ability.
+#Summary Robot sonar
 
 = Introduction =
 
