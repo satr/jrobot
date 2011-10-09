@@ -9,7 +9,7 @@ import com.googlecode.jrobot.robotSonar.RobotSonarEventArg;
 import com.googlecode.jrobot.robotSonar.RobotSonarEventListener;
 
 public class Robot implements RobotSonarEventListener {
-    private static final int MotorSpeed = 30;
+    private static final int MotorSpeed = 120;
 	
     private final NXTRegulatedMotor _motorL = Motor.A;
     private final NXTRegulatedMotor _motorR = Motor.C;
@@ -21,16 +21,16 @@ public class Robot implements RobotSonarEventListener {
 		_robotSonar.addListener(this)
 				   .addListener(_display);
 		_robotSonar.setObstacleMinDistance(15);
+		_robotSonar.setObstacleAngle(20);
 		_robotSonar.run();
 	}
 
 	public void run() {
 		_motorL.setSpeed(MotorSpeed);
 		_motorR.setSpeed(MotorSpeed);
-		_motorL.forward();
-		_motorL.forward();
+		_motorL.backward();
+		_motorR.backward();
 	}
-
 
 	public void dispose() {
 		stop();
@@ -46,7 +46,6 @@ public class Robot implements RobotSonarEventListener {
 	@Override
 	public void frontObstacleDetected(RobotSonarEventArg eventArg) {
 		stop();
-//		_display.showRobotStatus("obstacle!");
 	}
 
 	@Override

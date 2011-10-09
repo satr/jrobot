@@ -22,6 +22,8 @@ public class RobotSonar {
 	private RobotSonarRotationDirection _rotationDirection = RobotSonarRotationDirection.None;
 
 	private int _distance, _angle, _obstacleMinDistance;
+	private int angle;
+	private int _obstacleAngle;
 
 	public RobotSonar(NXTRegulatedMotor motor) {
 		super();
@@ -65,7 +67,8 @@ public class RobotSonar {
 		setDistance(getSonic().getDistance());
 		setAngle(_motor.getTachoCount());
 		fireDistanceMeasuredEvent();
-		if(getDistance() >= getObstacleMinDistance())
+		if(getDistance() <= getObstacleMinDistance()
+				&& getAngle() < _obstacleAngle && getAngle() > (_obstacleAngle * (-1)))
 			fireFrontObstacleEvent();
 	}
 
@@ -159,5 +162,9 @@ public class RobotSonar {
 			_sonic.continuous();
 		}
 		return _sonic;
+	}
+
+	public void setObstacleAngle(int angle) {
+		_obstacleAngle = angle / 2;
 	}
 }
