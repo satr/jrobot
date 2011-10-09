@@ -14,3 +14,5 @@ Robot sonar features
   * Notify about its state (measure made, rotate direction is changed, etc)
 
 To enlight development process - using display with "radar-style" diagram, reflecting distance, measured by the sonar.
+
+[qwe JRobot-001-RobotSonarView.jpg]
