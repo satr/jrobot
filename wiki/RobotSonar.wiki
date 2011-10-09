@@ -1,0 +1,15 @@
+#Building robot sonar solution to provide navigation ability.
+
+= Introduction =
+
+Robot need to be able have navigation abilities. First solution is using a sonar.
+
+
+= Details =
+
+Sonar should
+  * Detect obstacle in front of the way
+  * Measure distance at the forward halfcircle
+  * Make measures in continuos mode
+
+To enlight development process - using display with "radar-style" diagram, reflecting distance, measured by the sonar.
