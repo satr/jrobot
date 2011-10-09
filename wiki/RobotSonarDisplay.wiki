@@ -1,0 +1,11 @@
+#summary Robot Sonar Display
+
+= Introduction =
+
+Robot sonar display shows diagram which is provided by [RobotSonar the robot sonar].
+
+= Details =
+
+Diagram shows
+  * Measured distance as lines with length according distance value on specific angles
+  * Current distance as a number
