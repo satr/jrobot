@@ -8,8 +8,8 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 
 public class RobotSonar {
-    private static final int RotationSpeed = 120;
-    private static final int TimerInterval = 10;
+    private static final int RotationSpeed = 200;
+    private static final int TimerInterval = 20;
 	public static final int MaxAngle = 100;
 	public static final int MinAngle = MaxAngle * (-1);
 
@@ -109,7 +109,7 @@ public class RobotSonar {
 	}
 
 	public void stop() {
-		_motor.stop();
+		_motor.flt();
 	}
 
 	private void runTimer() {

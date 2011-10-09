@@ -8,7 +8,7 @@ import com.googlecode.jrobot.interaction.*;
 import com.googlecode.jrobot.sensors.*;
 
 public class Robot implements RobotSonarEventListener {
-    private static final int MotorSpeed = 100;
+    private static final int MotorSpeed = 150;
 	private final NXTRegulatedMotor _motorL = Motor.A;
     private final NXTRegulatedMotor _motorR = Motor.C;
 	private final RobotSonar _sonar = new RobotSonar(Motor.B);
@@ -19,13 +19,17 @@ public class Robot implements RobotSonarEventListener {
 	public Robot() {
 		super();
 		_wayExplorer = new RobotWayExplorer(this);
+		initRobotSonar();
+		_voice.mute();//to avoid noise
+	}
+
+	private void initRobotSonar() {
 		_sonar.addListener(this)
 				   .addListener(_display)
 				   .addListener(_wayExplorer);
 		_sonar.setObstacleMinDistance(15);
 		_sonar.setValidWayAngle(40);
 		_sonar.run();
-//		_voice.mute();//to avoid noise
 	}
 
 	public void run() {
@@ -35,15 +39,27 @@ public class Robot implements RobotSonarEventListener {
 		_motorR.backward();
 	}
 
+	public void turn(int angle) {
+		boolean turnRight = angle > 0;
+		(turnRight?_motorL:_motorR).forward();
+		(turnRight?_motorR:_motorL).backward();
+		int initTachoCount = _motorL.getTachoCount();
+		int realAngle = Math.abs((int) Math.round(angle * 5.6));
+		while(Math.abs(_motorL.getTachoCount() - initTachoCount) < realAngle)
+			Thread.yield();
+		(turnRight?_motorL:_motorR).backward();
+		(turnRight?_motorR:_motorL).backward();
+	}
+
 	public void dispose() {
 		stop();
 		_sonar.stop();
 		_sonar.dispose();
 	}
 
-	private void stop() {
-		_motorL.stop();
-		_motorR.stop();
+	public void stop() {
+		_motorL.flt();
+		_motorR.flt();
 	}
 
 	@Override
@@ -71,6 +87,9 @@ public class Robot implements RobotSonarEventListener {
 	public void notifyFreeWayFound(int directionAngle) {
 		_voice.Say(directionAngle > 0, RobotVoice.RobotVoiceItem.FreeWayFoundOnRight, RobotVoice.RobotVoiceItem.FreeWayFoundOnLeft);
 		_display.showRobotStatus("FreeWayFound,angle:" + String.valueOf(directionAngle));
+		_sonar.stop();
+		turn(directionAngle);
+		_sonar.run();
 	}
 
 }
