@@ -1,19 +1,31 @@
 package com.googlecode.jrobot.robotSonar;
 
 import java.util.ArrayList;
+import java.util.Timer;
+
+import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.SensorPort;
+import lejos.nxt.UltrasonicSensor;
 
 public class RobotSonar {
+    private static final int RotationSpeed = 120;
+    private static final int TimerInterval = 20;
 	public static final int MaxAngle = 90;
 	public static final int MinAngle = MaxAngle * (-1);
 
+	private final NXTRegulatedMotor _motor;
+
 	private final ArrayList<RobotSonarEventListener> _eventListeners = new ArrayList<RobotSonarEventListener>();
-	private final RobotSonarEventArg _eventArg;
+	private final RobotSonarEventArg _eventArg = new RobotSonarEventArg(this);
+	private Timer _timer;
+	private UltrasonicSensor _sonic;
+	private RobotSonarRotationDirection _rotationDirection = RobotSonarRotationDirection.None;
 
-	private int _distance, _angle, _obstacleMinDistance, _direction;
+	private int _distance, _angle, _obstacleMinDistance;
 
-	public RobotSonar() {
+	public RobotSonar(NXTRegulatedMotor motor) {
 		super();
-        _eventArg = new RobotSonarEventArg(this);
+		_motor = motor;
 	}
 
 	public int getDistance() {
@@ -22,12 +34,6 @@ public class RobotSonar {
 
 	public int getAngle() {
 		return _angle;
-	}
-
-	public RobotSonar changeDirection(int direction) {
-		setDirection(direction);
-		fireRotationDirectionChangedEvent();
-		return this;
 	}
 
 	public RobotSonar addListener(RobotSonarEventListener listener) {
@@ -55,9 +61,9 @@ public class RobotSonar {
             eventListener.rotationDirectionChanged(_eventArg);
 	}
 
-	public void setDistance(int distance, int angle) {
-		setDistance(distance);
-		setAngle(angle);
+	public void setDistance() {
+		setDistance(getSonic().getDistance());
+		setAngle(_motor.getTachoCount());
 		fireDistanceMeasuredEvent();
 		if(getDistance() >= getObstacleMinDistance())
 			fireFrontObstacleEvent();
@@ -79,15 +85,79 @@ public class RobotSonar {
 		return _obstacleMinDistance;
 	}
 
-	public void setDirection(int direction) {
-		_direction = direction;
-	}
-
-	public int getDirection() {
-		return _direction;
-	}
-
 	public void dispose() {
+		stopTimer();
 		_eventListeners.clear();
+	}
+
+	public void run() {
+		runTimer();
+        _motor.setSpeed(RotationSpeed);
+        if (getRotationDirection() == RobotSonarRotationDirection.Negative) {
+			_motor.backward();
+			return;
+		} 
+		_motor.forward();
+		setRotationDirection(RobotSonarRotationDirection.Positive);
+	}
+
+	public void stop() {
+		_motor.stop();
+	}
+
+	private void runTimer() {
+		if(_timer != null)
+			return;
+		_timer = new Timer();
+	    _timer.schedule(new RobotSonarTimerHandler(this), TimerInterval, TimerInterval);
+	}
+
+	private void stopTimer() {
+		if(_timer == null)
+			return;
+		_timer.cancel();
+	}
+
+	public boolean validateMinMaxAngle() {
+		int angle = _motor.getTachoCount();
+		RobotSonarRotationDirection rotationDirection = getRotationDirection();
+		return !(rotationDirection == RobotSonarRotationDirection.Positive && angle > RobotSonar.MaxAngle)
+			&& !(rotationDirection == RobotSonarRotationDirection.Negative && angle < RobotSonar.MinAngle);
+	}
+
+	public void changeRotationDirection() {
+		if(getRotationDirection() == RobotSonarRotationDirection.None)
+			return;
+		if(getRotationDirection() == RobotSonarRotationDirection.Positive){
+			_motor.backward();
+			setRotationDirection(RobotSonarRotationDirection.Negative);
+		}
+		else if (getRotationDirection() == RobotSonarRotationDirection.Negative){
+			_motor.forward();
+			setRotationDirection(RobotSonarRotationDirection.Positive);
+		}
+	}
+	
+	public void setRotationDirection(RobotSonarRotationDirection rotationDirection) {
+		if(_rotationDirection == rotationDirection)
+			return;
+		_rotationDirection = rotationDirection;
+		fireRotationDirectionChangedEvent();
+	}
+
+	private RobotSonarRotationDirection getRotationDirection() {
+		return _rotationDirection;
+	}
+
+	public boolean isRunning() {
+		return getRotationDirection() != RobotSonarRotationDirection.None;
+	}
+
+	public UltrasonicSensor getSonic() {
+		if(_sonic == null){
+			_sonic = new UltrasonicSensor(SensorPort.S1);
+			_sonic.continuous();
+		}
+		return _sonic;
 	}
 }
