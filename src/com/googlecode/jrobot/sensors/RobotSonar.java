@@ -1,4 +1,4 @@
-package com.googlecode.jrobot.robotSonar;
+package com.googlecode.jrobot.sensors;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -9,8 +9,8 @@ import lejos.nxt.UltrasonicSensor;
 
 public class RobotSonar {
     private static final int RotationSpeed = 120;
-    private static final int TimerInterval = 20;
-	public static final int MaxAngle = 90;
+    private static final int TimerInterval = 10;
+	public static final int MaxAngle = 100;
 	public static final int MinAngle = MaxAngle * (-1);
 
 	private final NXTRegulatedMotor _motor;
@@ -18,12 +18,13 @@ public class RobotSonar {
 	private final ArrayList<RobotSonarEventListener> _eventListeners = new ArrayList<RobotSonarEventListener>();
 	private final RobotSonarEventArg _eventArg = new RobotSonarEventArg(this);
 	private Timer _timer;
-	private UltrasonicSensor _sonic;
+	private UltrasonicSensor _sonicSensor;
 	private RobotSonarRotationDirection _rotationDirection = RobotSonarRotationDirection.None;
 
 	private int _distance, _angle, _obstacleMinDistance;
-	private int angle;
-	private int _obstacleAngle;
+	private int _validWayAngle;
+	private int _validWayPositiveHalfAngle;
+	private int _validWayNegativeHalfAngle;
 
 	public RobotSonar(NXTRegulatedMotor motor) {
 		super();
@@ -39,12 +40,14 @@ public class RobotSonar {
 	}
 
 	public RobotSonar addListener(RobotSonarEventListener listener) {
-		_eventListeners.add(listener);
+		if(!_eventListeners.contains(listener))
+			_eventListeners.add(listener);
 		return this;
 	}
 
 	public RobotSonar removeListener(RobotSonarEventListener listener) {
-		_eventListeners.remove(listener);
+		if(_eventListeners.contains(listener))
+			_eventListeners.remove(listener);
 		return this;
 	}
 
@@ -68,7 +71,7 @@ public class RobotSonar {
 		setAngle(_motor.getTachoCount());
 		fireDistanceMeasuredEvent();
 		if(getDistance() <= getObstacleMinDistance()
-				&& getAngle() < _obstacleAngle && getAngle() > (_obstacleAngle * (-1)))
+				&& getAngle() < _validWayPositiveHalfAngle && getAngle() > _validWayNegativeHalfAngle)
 			fireFrontObstacleEvent();
 	}
 
@@ -89,6 +92,7 @@ public class RobotSonar {
 	}
 
 	public void dispose() {
+		_motor.stop();
 		stopTimer();
 		_eventListeners.clear();
 	}
@@ -157,14 +161,24 @@ public class RobotSonar {
 	}
 
 	public UltrasonicSensor getSonic() {
-		if(_sonic == null){
-			_sonic = new UltrasonicSensor(SensorPort.S1);
-			_sonic.continuous();
+		if(_sonicSensor == null){
+			_sonicSensor = new UltrasonicSensor(SensorPort.S1);
+			_sonicSensor.continuous();
 		}
-		return _sonic;
+		return _sonicSensor;
 	}
 
-	public void setObstacleAngle(int angle) {
-		_obstacleAngle = angle / 2;
+	public void setValidWayAngle(int angle) {
+		_validWayAngle = angle;
+		_validWayPositiveHalfAngle = angle / 2;
+		_validWayNegativeHalfAngle = _validWayPositiveHalfAngle * (-1);
+	}
+
+	public int getValidWayAngle() {
+		return _validWayAngle;
+	}
+
+	public boolean validateCurrentDirectionIsFree() {
+		return getDistance() > getObstacleMinDistance();
 	}
 }

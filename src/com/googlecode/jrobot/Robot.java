@@ -3,26 +3,29 @@ package com.googlecode.jrobot;
 
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
-
-import com.googlecode.jrobot.robotSonar.RobotSonar;
-import com.googlecode.jrobot.robotSonar.RobotSonarEventArg;
-import com.googlecode.jrobot.robotSonar.RobotSonarEventListener;
+import com.googlecode.jrobot.analytics.*;
+import com.googlecode.jrobot.interaction.*;
+import com.googlecode.jrobot.sensors.*;
 
 public class Robot implements RobotSonarEventListener {
-    private static final int MotorSpeed = 120;
-	
-    private final NXTRegulatedMotor _motorL = Motor.A;
+    private static final int MotorSpeed = 100;
+	private final NXTRegulatedMotor _motorL = Motor.A;
     private final NXTRegulatedMotor _motorR = Motor.C;
-	private final RobotSonar _robotSonar = new RobotSonar(Motor.B);
+	private final RobotSonar _sonar = new RobotSonar(Motor.B);
 	private final RobotDisplay _display = new RobotDisplay();
+	private final RobotVoice _voice = new RobotVoice();
+	private final RobotWayExplorer _wayExplorer;
 
 	public Robot() {
 		super();
-		_robotSonar.addListener(this)
-				   .addListener(_display);
-		_robotSonar.setObstacleMinDistance(15);
-		_robotSonar.setObstacleAngle(20);
-		_robotSonar.run();
+		_wayExplorer = new RobotWayExplorer(this);
+		_sonar.addListener(this)
+				   .addListener(_display)
+				   .addListener(_wayExplorer);
+		_sonar.setObstacleMinDistance(15);
+		_sonar.setValidWayAngle(40);
+		_sonar.run();
+//		_voice.mute();//to avoid noise
 	}
 
 	public void run() {
@@ -34,8 +37,8 @@ public class Robot implements RobotSonarEventListener {
 
 	public void dispose() {
 		stop();
-		_robotSonar.stop();
-		_robotSonar.dispose();
+		_sonar.stop();
+		_sonar.dispose();
 	}
 
 	private void stop() {
@@ -46,6 +49,9 @@ public class Robot implements RobotSonarEventListener {
 	@Override
 	public void frontObstacleDetected(RobotSonarEventArg eventArg) {
 		stop();
+		_voice.Say(RobotVoice.RobotVoiceItem.FrontObstacleDetected);
+		if(_wayExplorer.findFreeWay(RobotWayExplorer.PreferableWay.Any))
+			_display.showRobotStatus("ExploreFreeWay...");
 	}
 
 	@Override
@@ -54,6 +60,17 @@ public class Robot implements RobotSonarEventListener {
 
 	@Override
 	public void rotationDirectionChanged(RobotSonarEventArg eventArg) {
+	}
+
+	public void notifyFrontFreeWayNotFound() {
+		//turn back and find other way...
+		_voice.Say(RobotVoice.RobotVoiceItem.FreeWayNotFound);
+		_display.showRobotStatus("FreeWayNotFound");
+	}
+
+	public void notifyFreeWayFound(int directionAngle) {
+		_voice.Say(directionAngle > 0, RobotVoice.RobotVoiceItem.FreeWayFoundOnRight, RobotVoice.RobotVoiceItem.FreeWayFoundOnLeft);
+		_display.showRobotStatus("FreeWayFound,angle:" + String.valueOf(directionAngle));
 	}
 
 }
