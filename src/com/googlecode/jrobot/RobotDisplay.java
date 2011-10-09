@@ -1,11 +1,10 @@
-package com.googlecode.jrobot;
+package com.googlecode.jrobot.interaction;
 import javax.microedition.lcdui.Graphics;
-
-import com.googlecode.jrobot.robotSonar.RobotSonar;
-import com.googlecode.jrobot.robotSonar.RobotSonarEventArg;
-import com.googlecode.jrobot.robotSonar.RobotSonarEventListener;
-
 import lejos.nxt.LCD;
+
+import com.googlecode.jrobot.sensors.RobotSonar;
+import com.googlecode.jrobot.sensors.RobotSonarEventArg;
+import com.googlecode.jrobot.sensors.RobotSonarEventListener;
 
 
 public class RobotDisplay implements RobotSonarEventListener {
@@ -68,5 +67,10 @@ public class RobotDisplay implements RobotSonarEventListener {
 		LCD.asyncRefreshWait();
 		LCD.drawString(message, 0, lineNumber);
 		LCD.asyncRefresh();
+	}
+
+	public void showTestCounter(int counter) {
+		writeMessage("   ", 6);
+		writeMessage(String.valueOf(counter), 6);
 	}
 }
