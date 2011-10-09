@@ -1,4 +1,5 @@
 #summary The JRobot outline
+#labels Featured
 
 = Introduction =
 
@@ -8,6 +9,6 @@ JRobot - is a project to controll a robot ba Java application.
 = Details =
 
 Robot needs some abilities and features:
-  * Interaction
+  * [RobotInteraction]Interaction
   * Navigation
   * Motion
