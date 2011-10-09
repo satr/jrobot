@@ -17,4 +17,4 @@ To enlight development process - using display with "radar-style" diagram, refle
 
 http://jrobot.googlecode.com/files/JRobot-001-RobotSonarView.jpg
 
-<wiki:video url=" http://www.youtube.com/watch?v=JtU58WIIilE">Working robot sonar</wiki:video>
+<wiki:video url="http://www.youtube.com/watch?v=JtU58WIIilE">Working robot sonar</wiki:video>
