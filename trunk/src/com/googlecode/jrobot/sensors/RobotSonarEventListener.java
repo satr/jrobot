@@ -1,4 +1,4 @@
-package com.googlecode.jrobot.robotSonar;
+package com.googlecode.jrobot.sensors;
 
 import java.util.EventListener;
 

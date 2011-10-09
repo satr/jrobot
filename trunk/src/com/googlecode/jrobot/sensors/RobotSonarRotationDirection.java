@@ -1,4 +1,4 @@
-package com.googlecode.jrobot.robotSonar;
+package com.googlecode.jrobot.sensors;
 
 public enum RobotSonarRotationDirection{
 	Positive,
