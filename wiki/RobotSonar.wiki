@@ -15,4 +15,4 @@ Robot sonar features
 
 To enlight development process - using display with "radar-style" diagram, reflecting distance, measured by the sonar.
 
-http://code.google.com/p/jrobot/downloads/detail?name=JRobot-001-RobotSonarView.jpg&can=2&q=
+http://code.google.com/p/jrobot/downloads/detail?name=JRobot-001-RobotSonarView.jpg
